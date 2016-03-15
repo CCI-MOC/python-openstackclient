@@ -227,6 +227,13 @@ class OpenStackShell(app.App):
             action='store_true',
             help="Print API call timing info",
         )
+        parser.add_argument(
+            '--os-service-provider',
+            metavar='<os_service_provider>',
+            dest='os_service_provider',
+            default=None,
+            help='Federated Service Provider ID'
+        )
 
         # osprofiler HMAC key argument
         if osprofiler_profiler:

@@ -205,6 +205,31 @@ class ClientManager(object):
         if not self._auth_ref:
             self.setup_auth()
             LOG.debug("Get auth_ref")
+
+            if self._cli_options.os_service_provider:
+                from keystoneauth1 import identity
+                from keystoneauth1 import session as ks
+                from keystoneauth1.identity.v3.k2k import Keystone2Keystone
+
+                idp_auth = identity.Password(auth_url=self._auth_params['auth_url'],
+                                             username=self._auth_params['username'],
+                                             password=self._auth_params['password'],
+                                             project_name=self._auth_params[
+                                                 'project_name'],
+                                             project_domain_id=self._auth_params[
+                                                 'project_domain_id'],
+                                             user_domain_id=self._auth_params[
+                                                 'user_domain_id'])
+
+                self.auth = Keystone2Keystone(idp_auth,
+                                              self._cli_options.os_service_provider,
+                                              project_name=self._auth_params[
+                                                 'project_name'],
+                                              project_domain_id=self._auth_params[
+                                                 'project_domain_id'])
+
+                self.session = ks.Session(auth=self.auth)
+
             self._auth_ref = self.auth.get_auth_ref(self.session)
         return self._auth_ref
 
